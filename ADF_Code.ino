@@ -19,7 +19,7 @@ const int waitTime = 500;
  
 #define MAX_DISTANCE 200 // fmaximum distance set to 200 cm
  
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // initialize NewPing\\
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // initialize NewPing
 
 const int emptyDistance = 15;
 
@@ -46,10 +46,11 @@ const int serveBrfH = 9;
 const int serveM = 4;
 const int serveDinH = 21;
 const int serveSec = 0;
-const int checkDuration = 10000; //3 min
-const int checkFrequency = 1000; //30 sec
+const int checkDuration = 10000; //10 sec
+const int checkFrequency = 1000; //1 sec
 const int arrSize = 10;
 const int thrshld = 8;
+
 //array
 bool checkRes [arrSize];
 
@@ -83,16 +84,13 @@ void setup() {
      rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
-  //pushbutton
- // pinMode(pushbutton, INPUT);
-
   //LED
   pinMode(LIGHT, OUTPUT);
- 
  
 }
 
 void wait(int milliseconds) {
+ 
   unsigned long prevTime = millis();
   unsigned long currentTime = millis();
 
@@ -217,21 +215,13 @@ void loop() {
 
   bool serve = false;
 
-  //in case of jamming or whatever a pushbutton is necessary
-  /*if(digitalRead(pushbutton) == ON) {
-    Serial.println("PUSHBUTTON ON");
-    openServo();
-  }*/
-  
-  //else {
-       checkTime(serve, h, m, sec);
+  checkTime(serve, h, m, sec);
 
-      if(serve) {
-        bool noFood = checkFood();
-        if(noFood) {
-          Serial.println("Dispensing food");
-          openServo();
-        }
-     }
-   //}
+  if(serve) {
+     bool noFood = checkFood();
+     if(noFood) {
+        Serial.println("Dispensing food");
+        openServo();
+      }
+   }
 }
