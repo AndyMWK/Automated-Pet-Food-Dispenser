@@ -1,14 +1,18 @@
+/*
+2024 UPDATE DISCLAIMER: 
+The provided comments and documentation may not be the most accurate as some features are not used. 
+I apologize for the lack of detail in the documentation of this project ;(
+ */
 
-//Servo
+//----Servo Initalization---
 #include <Servo.h>
 Servo myservo;
 const int openAngle = 130;
 const int closedAngle = 23;
 const int waitTime = 500;
 
-//Sonar
-#include <NewPing.h>   // include the NewPing library for this program
- 
+
+//---Pin Definition---
 #define VCC_PIN 13
  
 #define TRIGGER_PIN 12 // sonar trigger pin will be attached to Arduino pin 12
@@ -18,30 +22,32 @@ const int waitTime = 500;
 #define GROUND_PIN 10
  
 #define MAX_DISTANCE 200 // fmaximum distance set to 200 cm
- 
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // initialize NewPing
 
+
+//---Sonar Initilization---
+#include <NewPing.h>   
+
+//Create sonar object
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
+//define the distance the sonar sensor will detect if the pet food bowl is empty
 const int emptyDistance = 15;
 
 
 
-//RTC
+//---RTC Initialization---
 #include "RTClib.h"
 #include <Wire.h>
 
+//Create RTC Object
 RTC_DS3231 rtc;
+//This defines the day of the week...This feature probably is not used...
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
-//Pushbutton - for diagnostic and opening
-#define ON HIGH
-#define OFF LOW
-//#define pushbutton 4
 
 //LED
 const int LIGHT = 6;
 
 //constants
-
 const int serveBrfH = 9;
 const int serveM = 4;
 const int serveDinH = 21;
@@ -51,16 +57,16 @@ const int checkFrequency = 1000; //1 sec
 const int arrSize = 10;
 const int thrshld = 8;
 
-//array
+//An array that stores the ultrasonic sensor data
 bool checkRes [arrSize];
 
 
 void setup() {
   
- //Serial monitor
- Serial. begin(9600);  // set data transmission rate to communicate with computer
+ //Serial monitor initialization
+ Serial. begin(9600);  
 
- //Sonar
+ //Sonar initialization
  pinMode(ECHO_PIN, INPUT) ;
  pinMode(TRIGGER_PIN, OUTPUT) ;
  pinMode(GROUND_PIN, OUTPUT);  // tell pin 10 it is going to be an output
@@ -68,12 +74,12 @@ void setup() {
  digitalWrite(GROUND_PIN,LOW); // tell pin 10 to output LOW (OV, or ground)
  digitalWrite(VCC_PIN, HIGH) ; // tell pin 13 to output HIGH (+5V)
  
- //Servo
+ //Servo initialization
  myservo.attach(9); //attaches the servo on pin 9 to the servo object 
  myservo.write(closedAngle); //130 is the open angle
                     // 23 is the close angle
  //RTC-DS3231
-  delay(3000); // wait for console opening
+ delay(3000); // wait for console opening
 
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
@@ -89,6 +95,8 @@ void setup() {
  
 }
 
+//This wait function replaces delay at some points of the program. 
+//millis is used often enough to have a dedicated function like this. 
 void wait(int milliseconds) {
  
   unsigned long prevTime = millis();
@@ -103,6 +111,8 @@ void wait(int milliseconds) {
   }
 }
 
+//This function makes the servo move to an "open" angle. 
+//This allows pet food to come out
 void openServo() {
   myservo.write(openAngle);
 
@@ -111,6 +121,8 @@ void openServo() {
   myservo.write(closedAngle);
 }
 
+//This function checks the current time and determines whether or not
+//food should be served
 bool checkTime(bool &serve, int &h, int &m, int &sec ) {
   if((h == serveBrfH) && (m == serveM) && (sec == 0)) {
    serve = true;
@@ -122,6 +134,7 @@ bool checkTime(bool &serve, int &h, int &m, int &sec ) {
   return serve;
 }
 
+
 void acctDistance(const int &distance, int pos) {
   bool res = true;
   if(distance < emptyDistance) {
@@ -130,6 +143,8 @@ void acctDistance(const int &distance, int pos) {
   checkRes[pos] = res;
 }
 
+//This function determines if pet food should be served or not based on 
+//ultrasonic sensor readings
 bool cmptServng() {
   int countT = 0;
   int countF = 0;
@@ -144,12 +159,13 @@ bool cmptServng() {
   if(countT >= thrshld) {
     return true;
   }
-  //it doesn't matter what we are comparing next actually. An else statement will work but to make it clear what we are doing, we are comparing
   else if(countF >=thrshld) {
     return false;
   }
 }
 
+//This function checks whether or not pet food is already present. 
+//We want to do this because we do not want to double the amount of pet food suddenly ;)
 bool checkFood() {
 
    unsigned long prevTime = millis();
@@ -161,7 +177,7 @@ bool checkFood() {
    int pos = 0;
 
     digitalWrite(LIGHT, ON);
-   while (dispensing == true) {
+    while (dispensing == true) {
         
         if((currentTime - prevTime) >= checkFrequency) {
           //timer is reduced until it reaches zero
@@ -214,9 +230,11 @@ void loop() {
   Serial.println(sec);
 
   bool serve = false;
-
+ 
+  //continuously check time
   checkTime(serve, h, m, sec);
 
+  //if it is time to serve food, program enters this loop to dispense pet food. 
   if(serve) {
      bool noFood = checkFood();
      if(noFood) {
@@ -224,4 +242,5 @@ void loop() {
         openServo();
       }
    }
+  delay(1000);
 }
