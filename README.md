@@ -10,7 +10,7 @@ The program uses an real time clock unit (RTC DS3231), Servo Motor, and Ultrason
 A detailed presentation for this project is provided in the Google Slides link [here](https://docs.google.com/presentation/d/1Ay6A9ancN2sPKq_UfnCWdsdsOTJJ4S7ue0nOjFtLlVE/edit?usp=sharing)
 Video footage of its operation can be found [here](https://youtu.be/rdzTi59023Y) 
 
-## An Apology
-The listed soure code does not have much comments...At this time, I didn't really have a good grasp of best coding practices. 
+## Libraries Used
+All libraries for this project either come with the Arduino IDE or downloaded through the library manager of the Arduino IDE. I have not written a library function for this project. 
 
 
