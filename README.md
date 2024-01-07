@@ -8,6 +8,9 @@ The program uses an real time clock unit (RTC DS3231), Servo Motor, and Ultrason
 
 ## Further Documentation
 A detailed presentation for this project is provided in the Google Slides link [here](https://docs.google.com/presentation/d/1Ay6A9ancN2sPKq_UfnCWdsdsOTJJ4S7ue0nOjFtLlVE/edit?usp=sharing)
-Video footage of its operation can be found [here](https://youtu.be/rdzTi59023Y)
+Video footage of its operation can be found [here](https://youtu.be/rdzTi59023Y) 
+
+## An Apology
+The listed soure code does not have much comments...At this time, I didn't really have a good grasp of best coding practices. 
 
 
